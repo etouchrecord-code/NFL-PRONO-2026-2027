@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFL SAISON 2026-2027</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#141d33; --card2:#1b2740; --accent:#ff5a36;
+    --accent2:#2dd4bf; --text:#eef2ff; --muted:#8b93ab; --win:#22c55e; --gold:#f5b301;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:linear-gradient(180deg,#0b1220 0%,#0e1730 100%); color:var(--text);
+    min-height:100vh; padding-bottom:70px;
+  }
+  header{
+    padding:20px 18px 14px; text-align:center; position:sticky; top:0;
+    background:rgba(11,18,32,0.94); backdrop-filter:blur(8px); z-index:10;
+    border-bottom:1px solid #1e2a47;
+  }
+  header h1{margin:0; font-size:19px; letter-spacing:.5px;}
+  header h1 span{color:var(--accent);}
+  .pseudo-bar{margin-top:6px; font-size:12px; color:var(--muted);}
+  .pseudo-bar b{color:var(--accent2);}
+  .info-link{margin-top:8px; font-size:11px; color:var(--accent2); cursor:pointer; text-decoration:underline;}
+  main{max-width:520px; margin:0 auto; padding:16px;}
+
+  /* Info panel */
+  .info-panel{
+    background:var(--card); border:1px solid #253150; border-radius:14px; padding:16px;
+    margin-bottom:16px; font-size:13px; line-height:1.6;
+  }
+  .info-panel h3{margin:0 0 8px; font-size:14px; color:var(--accent2);}
+  .info-panel .date-row{display:flex; justify-content:space-between; color:var(--muted); padding:2px 0;}
+  .info-panel .date-row b{color:var(--text); font-weight:500;}
+  .info-panel .rules{margin-top:10px; padding-top:10px; border-top:1px solid #253150; color:var(--muted);}
+  .info-panel .rules li{margin-bottom:4px;}
+  .close-info{text-align:right; font-size:11px; color:var(--muted); margin-top:10px; cursor:pointer;}
+
+  /* Login */
+  .login-box{margin-top:60px; text-align:center; padding:24px;}
+  .login-box h2{font-size:18px; margin-bottom:6px;}
+  .login-box p{color:var(--muted); font-size:14px; margin-bottom:20px;}
+  input[type=text]{
+    width:100%; padding:14px; border-radius:12px; border:1px solid #2a3555;
+    background:var(--card); color:var(--text); font-size:16px; text-align:center;
+  }
+  button{cursor:pointer; border:none; border-radius:12px; font-weight:600; font-size:15px;}
+  .btn-primary{width:100%; margin-top:14px; padding:14px; background:var(--accent); color:#fff;}
+  .btn-primary:active{opacity:.85;}
+  .btn-small{padding:9px 12px; font-size:13px; background:var(--accent2); color:#04201c;}
+
+  /* Week selector */
+  .weeks-scroll{display:flex; gap:8px; overflow-x:auto; padding:4px 0 14px; -webkit-overflow-scrolling:touch;}
+  .week-chip{
+    flex:0 0 auto; padding:9px 14px; border-radius:20px; background:var(--card2);
+    color:var(--muted); font-size:13px; white-space:nowrap; border:1px solid #253150;
+  }
+  .week-chip.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .week-chip.disabled{opacity:.35;}
+
+  .empty-week{text-align:center; padding:50px 20px; color:var(--muted); font-size:14px;}
+
+  /* Game card */
+  .game{background:var(--card); border-radius:14px; padding:14px; margin-bottom:10px; border:1px solid #202c4a;}
+  .game-meta{font-size:11px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:.4px; display:flex; justify-content:space-between;}
+  .points-tag{color:var(--gold); font-weight:700;}
+  .matchup{display:flex; align-items:center; gap:8px;}
+  .team-btn{
+    flex:1; padding:12px 8px; border-radius:10px; background:var(--card2);
+    color:var(--text); font-size:14px; font-weight:600; text-align:center; border:2px solid transparent;
+  }
+  .team-btn.picked{border-color:var(--accent2); background:#12332f; color:var(--accent2);}
+  .team-btn.result-win{border-color:var(--win); background:#123321; color:var(--win);}
+  .vs{color:var(--muted); font-size:12px; padding:0 2px;}
+  .team-input{
+    flex:1; padding:10px 8px; border-radius:10px; background:var(--card2); border:1px solid #2a3555;
+    color:var(--text); font-size:13px; text-align:center;
+  }
+
+  .save-bar{
+    position:fixed; bottom:0; left:0; right:0; padding:12px 16px;
+    background:rgba(11,18,32,0.95); backdrop-filter:blur(8px); border-top:1px solid #1e2a47;
+    display:flex; justify-content:center; z-index:20;
+  }
+  .save-bar button{max-width:520px; width:100%;}
+
+  /* Nav tabs */
+  .tabs{display:flex; gap:6px; margin-bottom:14px;}
+  .tab{flex:1; padding:11px 4px; text-align:center; border-radius:12px; background:var(--card2); color:var(--muted); font-size:12px;}
+  .tab.active{background:var(--accent2); color:#04201c;}
+
+  /* Playoffs */
+  .round-block{margin-bottom:20px;}
+  .round-title{font-size:14px; font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;}
+  .round-title .pts{font-size:11px; color:var(--gold); background:#2a2410; padding:3px 8px; border-radius:8px;}
+
+  /* Leaderboard */
+  .lb-row{
+    display:flex; align-items:center; justify-content:space-between; padding:12px 14px;
+    background:var(--card); border-radius:12px; margin-bottom:8px; border:1px solid #202c4a;
+  }
+  .lb-row.top1{border-color:var(--gold);}
+  .lb-rank{font-weight:700; color:var(--accent); width:26px;}
+  .lb-name{flex:1; font-size:14px;}
+  .lb-score{font-weight:700; color:var(--accent2);}
+  .lb-detail{font-size:10px; color:var(--muted); margin-top:2px;}
+
+  /* Admin */
+  .admin-toggle{text-align:center; font-size:11px; color:var(--muted); margin-top:24px; padding:10px;}
+  .admin-panel{background:var(--card2); border-radius:12px; padding:12px; margin-top:10px;}
+  .admin-panel input{margin-bottom:8px;}
+  .soon{color:var(--muted); font-size:11px; margin-left:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏈 <span>NFL SAISON 2026-2027</span></h1>
+  <div class="pseudo-bar" id="pseudoBar" style="display:none;">Connecté : <b id="pseudoLabel"></b></div>
+  <div class="info-link" onclick="toggleInfo()">ℹ️ Dates clés &amp; règles du jeu</div>
+</header>
+
+<main>
+  <div class="info-panel" id="infoPanel" style="display:none;">
+    <h3>Dates clés de la saison</h3>
+    <div class="date-row"><span>Début saison régulière</span><b>Mer. 9 septembre 2026</b></div>
+    <div class="date-row"><span>Fin saison régulière</span><b>Dim. 10 janvier 2027</b></div>
+    <div class="date-row"><span>Wild Card Round</span><b>16-18 janvier 2027</b></div>
+    <div class="date-row"><span>Divisional Round</span><b>23-24 janvier 2027</b></div>
+    <div class="date-row"><span>Conference Championships</span><b>31 janvier 2027</b></div>
+    <div class="date-row"><span>Super Bowl LXI</span><b>14 février 2027 - SoFi Stadium</b></div>
+    <div class="rules">
+      <b style="color:var(--text)">Barème de points</b>
+      <ul style="padding-left:18px; margin:8px 0 0;">
+        <li>Présaison &amp; saison régulière : <b style="color:var(--text)">1 point</b> par bon pronostic</li>
+        <li>Wild Card : 1 point &nbsp;•&nbsp; Divisional : 2 points</li>
+        <li>Conference Championship : 3 points &nbsp;•&nbsp; Super Bowl : 5 points</li>
+      </ul>
+    </div>
+    <div class="close-info" onclick="toggleInfo()">Fermer ✕</div>
+  </div>
+
+  <div id="loginView" class="login-box">
+    <h2>Rejoins la ligue de pronostics</h2>
+    <p>Choisis un pseudo (pas de mot de passe, juste entre nous).</p>
+    <input type="text" id="pseudoInput" placeholder="Ton pseudo" maxlength="20">
+    <button class="btn-primary" onclick="login()">C'est parti</button>
+  </div>
+
+  <div id="appView" style="display:none;">
+    <div class="tabs">
+      <div class="tab active" id="tabPicks" onclick="switchTab('picks')">Saison</div>
+      <div class="tab" id="tabPlayoffs" onclick="switchTab('playoffs')">Playoffs</div>
+      <div class="tab" id="tabBoard" onclick="switchTab('board')">Classement</div>
+    </div>
+
+    <div id="picksView">
+      <div class="weeks-scroll" id="weeksScroll"></div>
+      <div id="gamesList"></div>
+    </div>
+
+    <div id="playoffsView" style="display:none;">
+      <div id="playoffsList"></div>
+    </div>
+
+    <div id="boardView" style="display:none;">
+      <div id="lbList"></div>
+    </div>
+
+    <div class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">⚙️ Espace admin (résultats &amp; équipes de playoffs)</div>
+    <div class="admin-panel" id="adminPanel" style="display:none;"></div>
+  </div>
+</main>
+
+<div class="save-bar" id="saveBar" style="display:none;">
+  <button class="btn-primary" onclick="saveCurrent()">Enregistrer mes pronostics</button>
+</div>
+
+<script>
+/* ===================== DONNÉES : SAISON RÉGULIÈRE + PRÉSAISON ===================== */
+/* Présaison (Hall of Fame Game + 3 semaines) et saison régulière complète
+   (semaines 1 à 18, 272 matchs) — données NFL 2026-2027 fournies par l'utilisateur. */
+const SEASON = [
+  { id:"preHallofFameGame", label:"Hall of Fame Game", games:[
+    ["Panthers","Cardinals"]
+  ]},
+  { id:"prePresaisonS1", label:"Présaison S1", games:[
+    ["Lions","Bengals"],
+    ["Packers","Steelers"],
+    ["Colts","Patriots"],
+    ["Chargers","Texans"],
+    ["Broncos","Falcons"],
+    ["Buccaneers","Jets"],
+    ["Dolphins","Commanders"],
+    ["Panthers","Bills"],
+    ["Browns","Bears"],
+    ["Vikings","Giants"],
+    ["Cardinals","Raiders"],
+    ["Titans","49ers"],
+    ["Rams","Chiefs"],
+    ["Jaguars","Saints"],
+    ["Eagles","Ravens"],
+    ["Cowboys","Seahawks"]
+  ]},
+  { id:"prePresaisonS2", label:"Présaison S2", games:[
+    ["Raiders","Texans"],
+    ["49ers","Chargers"],
+    ["Jets","Steelers"],
+    ["Panthers","Jaguars"],
+    ["Bills","Browns"],
+    ["Falcons","Colts"],
+    ["Cowboys","Cardinals"],
+    ["Packers","Broncos"],
+    ["Commanders","Lions"],
+    ["Ravens","Vikings"],
+    ["Giants","Dolphins"],
+    ["Saints","Rams"],
+    ["Bears","Bengals"],
+    ["Eagles","Patriots"],
+    ["Chiefs","Buccaneers"],
+    ["Seahawks","Titans"]
+  ]},
+  { id:"prePresaisonS3", label:"Présaison S3", games:[
+    ["49ers","Raiders"],
+    ["Steelers","Bills"],
+    ["Patriots","Browns"],
+    ["Rams","Chargers"],
+    ["Texans","Panthers"],
+    ["Falcons","Dolphins"],
+    ["Commanders","Ravens"],
+    ["Buccaneers","Jaguars"],
+    ["Giants","Jets"],
+    ["Seahawks","Chiefs"],
+    ["Bengals","Eagles"],
+    ["Saints","Cowboys"],
+    ["Vikings","Broncos"],
+    ["Cardinals","Packers"],
+    ["Bears","Titans"],
+    ["Lions","Colts"]
+  ]},
+  { id:"w1", label:"Semaine 1", games:[
+    ["Patriots","Seahawks"],
+    ["49ers","Rams"],
+    ["Bears","Panthers"],
+    ["Buccaneers","Bengals"],
+    ["Ravens","Colts"],
+    ["Saints","Lions"],
+    ["Bills","Texans"],
+    ["Browns","Jaguars"],
+    ["Jets","Titans"],
+    ["Falcons","Steelers"],
+    ["Packers","Vikings"],
+    ["Commanders","Eagles"],
+    ["Dolphins","Raiders"],
+    ["Cardinals","Chargers"],
+    ["Cowboys","Giants"],
+    ["Broncos","Chiefs"]
+  ]},
+  { id:"w2", label:"Semaine 2", games:[
+    ["Lions","Bills"],
+    ["Panthers","Falcons"],
+    ["Vikings","Bears"],
+    ["Bengals","Texans"],
+    ["Steelers","Patriots"],
+    ["Packers","Jets"],
+    ["Eagles","Titans"],
+    ["Saints","Ravens"],
+    ["Browns","Buccaneers"],
+    ["Jaguars","Broncos"],
+    ["Raiders","Chargers"],
+    ["Seahawks","Cardinals"],
+    ["Commanders","Cowboys"],
+    ["Dolphins","49ers"],
+    ["Colts","Chiefs"],
+    ["Giants","Rams"]
+  ]},
+  { id:"w3", label:"Semaine 3", games:[
+    ["Falcons","Packers"],
+    ["Chargers","Bills"],
+    ["Panthers","Browns"],
+    ["Texans","Colts"],
+    ["Jets","Lions"],
+    ["Patriots","Jaguars"],
+    ["Chiefs","Dolphins"],
+    ["Titans","Giants"],
+    ["Bengals","Steelers"],
+    ["Seahawks","Commanders"],
+    ["Cardinals","49ers"],
+    ["Vikings","Buccaneers"],
+    ["Ravens","Cowboys"],
+    ["Raiders","Saints"],
+    ["Rams","Broncos"],
+    ["Eagles","Bears"]
+  ]},
+  { id:"w4", label:"Semaine 4", games:[
+    ["Steelers","Browns"],
+    ["Colts","Commanders"],
+    ["Patriots","Bills"],
+    ["Jets","Bears"],
+    ["Jaguars","Bengals"],
+    ["Cowboys","Texans"],
+    ["Cardinals","Giants"],
+    ["Rams","Eagles"],
+    ["Titans","Ravens"],
+    ["Packers","Buccaneers"],
+    ["Dolphins","Vikings"],
+    ["Chiefs","Raiders"],
+    ["Chargers","Seahawks"],
+    ["Broncos","49ers"],
+    ["Lions","Panthers"],
+    ["Falcons","Saints"]
+  ]},
+  { id:"w5", label:"Semaine 5", games:[
+    ["Buccaneers","Cowboys"],
+    ["Eagles","Jaguars"],
+    ["Bengals","Dolphins"],
+    ["Vikings","Saints"],
+    ["Raiders","Patriots"],
+    ["Browns","Jets"],
+    ["Texans","Titans"],
+    ["Colts","Steelers"],
+    ["Giants","Commanders"],
+    ["Broncos","Chargers"],
+    ["Lions","Cardinals"],
+    ["Bears","Packers"],
+    ["49ers","Seahawks"],
+    ["Ravens","Falcons"],
+    ["Bills","Rams"]
+  ]},
+  { id:"w6", label:"Semaine 6", games:[
+    ["Seahawks","Broncos"],
+    ["Texans","Jaguars"],
+    ["Bears","Falcons"],
+    ["Ravens","Browns"],
+    ["Titans","Colts"],
+    ["Jets","Patriots"],
+    ["Saints","Giants"],
+    ["Panthers","Eagles"],
+    ["Steelers","Buccaneers"],
+    ["Cardinals","Rams"],
+    ["Chargers","Chiefs"],
+    ["Bills","Raiders"],
+    ["Cowboys","Packers"],
+    ["Commanders","49ers"]
+  ]},
+  { id:"w7", label:"Semaine 7", games:[
+    ["Patriots","Bears"],
+    ["Steelers","Saints"],
+    ["49ers","Falcons"],
+    ["Buccaneers","Panthers"],
+    ["Giants","Texans"],
+    ["Colts","Vikings"],
+    ["Dolphins","Jets"],
+    ["Browns","Titans"],
+    ["Bengals","Ravens"],
+    ["Broncos","Cardinals"],
+    ["Packers","Lions"],
+    ["Rams","Raiders"],
+    ["Chiefs","Seahawks"],
+    ["Cowboys","Eagles"]
+  ]},
+  { id:"w8", label:"Semaine 8", games:[
+    ["Panthers","Packers"],
+    ["Ravens","Bills"],
+    ["Titans","Bengals"],
+    ["Cardinals","Cowboys"],
+    ["Vikings","Lions"],
+    ["Colts","Jaguars"],
+    ["Raiders","Jets"],
+    ["Browns","Steelers"],
+    ["Falcons","Buccaneers"],
+    ["Chargers","Rams"],
+    ["Chiefs","Broncos"],
+    ["Patriots","Dolphins"],
+    ["Eagles","Commanders"],
+    ["Bears","Seahawks"]
+  ]},
+  { id:"w9", label:"Semaine 9", games:[
+    ["Jaguars","Ravens"],
+    ["Bengals","Falcons"],
+    ["Broncos","Panthers"],
+    ["Cowboys","Colts"],
+    ["Jets","Chiefs"],
+    ["Lions","Dolphins"],
+    ["Browns","Saints"],
+    ["Giants","Eagles"],
+    ["Rams","Commanders"],
+    ["Texans","Chargers"],
+    ["Raiders","49ers"],
+    ["Packers","Patriots"],
+    ["Cardinals","Seahawks"],
+    ["Buccaneers","Bears"],
+    ["Bills","Vikings"]
+  ]},
+  { id:"w10", label:"Semaine 10", games:[
+    ["Commanders","Giants"],
+    ["Patriots","Lions"],
+    ["Chiefs","Falcons"],
+    ["Texans","Browns"],
+    ["Dolphins","Colts"],
+    ["Vikings","Packers"],
+    ["Panthers","Saints"],
+    ["Bills","Jets"],
+    ["Jaguars","Titans"],
+    ["Rams","Cardinals"],
+    ["Seahawks","Raiders"],
+    ["49ers","Cowboys"],
+    ["Steelers","Bengals"],
+    ["Chargers","Ravens"]
+  ]},
+  { id:"w11", label:"Semaine 11", games:[
+    ["Colts","Texans"],
+    ["Dolphins","Bills"],
+    ["Ravens","Panthers"],
+    ["Saints","Bears"],
+    ["Titans","Cowboys"],
+    ["Buccaneers","Lions"],
+    ["Cardinals","Chiefs"],
+    ["Jaguars","Giants"],
+    ["Jets","Chargers"],
+    ["Raiders","Broncos"],
+    ["Steelers","Eagles"],
+    ["Vikings","49ers"],
+    ["Bengals","Commanders"]
+  ]},
+  { id:"w12", label:"Semaine 12", games:[
+    ["Packers","Rams"],
+    ["Bears","Lions"],
+    ["Eagles","Cowboys"],
+    ["Chiefs","Bills"],
+    ["Broncos","Steelers"],
+    ["Saints","Bengals"],
+    ["Raiders","Browns"],
+    ["Giants","Colts"],
+    ["Ravens","Texans"],
+    ["Jets","Dolphins"],
+    ["Falcons","Vikings"],
+    ["Titans","Jaguars"],
+    ["Commanders","Cardinals"],
+    ["Seahawks","49ers"],
+    ["Patriots","Chargers"],
+    ["Panthers","Buccaneers"]
+  ]},
+  { id:"w13", label:"Semaine 13", games:[
+    ["Chiefs","Rams"],
+    ["Lions","Falcons"],
+    ["Jaguars","Bears"],
+    ["Bengals","Browns"],
+    ["Packers","Saints"],
+    ["49ers","Giants"],
+    ["Commanders","Titans"],
+    ["Chargers","Buccaneers"],
+    ["Eagles","Cardinals"],
+    ["Dolphins","Broncos"],
+    ["Panthers","Vikings"],
+    ["Bills","Patriots"],
+    ["Texans","Steelers"],
+    ["Cowboys","Seahawks"]
+  ]},
+  { id:"w14", label:"Semaine 14", games:[
+    ["Vikings","Patriots"],
+    ["Saints","Panthers"],
+    ["Falcons","Browns"],
+    ["Titans","Lions"],
+    ["Bears","Dolphins"],
+    ["Broncos","Jets"],
+    ["Colts","Eagles"],
+    ["Buccaneers","Ravens"],
+    ["Texans","Commanders"],
+    ["Chargers","Raiders"],
+    ["Chiefs","Bengals"],
+    ["Giants","Seahawks"],
+    ["Rams","49ers"],
+    ["Bills","Packers"],
+    ["Steelers","Jaguars"]
+  ]},
+  { id:"w15", label:"Semaine 15", games:[
+    ["49ers","Chargers"],
+    ["Seahawks","Eagles"],
+    ["Bears","Bills"],
+    ["Bengals","Panthers"],
+    ["Dolphins","Packers"],
+    ["Jaguars","Texans"],
+    ["Browns","Giants"],
+    ["Colts","Titans"],
+    ["Ravens","Steelers"],
+    ["Saints","Buccaneers"],
+    ["Falcons","Commanders"],
+    ["Jets","Cardinals"],
+    ["Broncos","Raiders"],
+    ["Cowboys","Rams"],
+    ["Lions","Vikings"],
+    ["Patriots","Chiefs"]
+  ]},
+  { id:"w16", label:"Semaine 16", games:[
+    ["Texans","Eagles"],
+    ["Packers","Bears"],
+    ["Bills","Broncos"],
+    ["Rams","Seahawks"],
+    ["Buccaneers","Falcons"],
+    ["Bengals","Colts"],
+    ["Chargers","Dolphins"],
+    ["Commanders","Vikings"],
+    ["Cardinals","Saints"],
+    ["Patriots","Jets"],
+    ["Panthers","Steelers"],
+    ["Browns","Ravens"],
+    ["Titans","Raiders"],
+    ["49ers","Chiefs"],
+    ["Jaguars","Cowboys"],
+    ["Giants","Lions"]
+  ]},
+  { id:"w17", label:"Semaine 17", games:[
+    ["Ravens","Bengals"],
+    ["Saints","Falcons"],
+    ["Seahawks","Panthers"],
+    ["Colts","Browns"],
+    ["Giants","Cowboys"],
+    ["Commanders","Jaguars"],
+    ["Bills","Dolphins"],
+    ["Broncos","Patriots"],
+    ["Vikings","Jets"],
+    ["Steelers","Titans"],
+    ["Chiefs","Chargers"],
+    ["Rams","Buccaneers"],
+    ["Raiders","Cardinals"],
+    ["Lions","Bears"],
+    ["Eagles","49ers"],
+    ["Texans","Packers"]
+  ]},
+  { id:"w18", label:"Semaine 18", games:[
+    ["Jets","Bills"],
+    ["Falcons","Panthers"],
+    ["Browns","Bengals"],
+    ["Jaguars","Colts"],
+    ["49ers","Cardinals"],
+    ["Chargers","Broncos"],
+    ["Lions","Packers"],
+    ["Titans","Texans"],
+    ["Raiders","Chiefs"],
+    ["Bears","Vikings"],
+    ["Buccaneers","Saints"],
+    ["Dolphins","Patriots"],
+    ["Eagles","Giants"],
+    ["Seahawks","Rams"],
+    ["Steelers","Ravens"],
+    ["Cowboys","Commanders"]
+  ]},
+];
+
+const WEEKS = SEASON.map(w=>({
+  id:w.id, label:w.label,
+  games:w.games.map((g,i)=>({gid:w.id+"-g"+i, away:g[0], home:g[1]}))
+}));
+
+/* ===================== DONNÉES : PLAYOFFS ===================== */
+/* Équipes inconnues à l'avance (dépendent des résultats de la saison régulière).
+   L'admin les renseigne au fur et à mesure dans l'espace admin, onglet Playoffs. */
+const PLAYOFFS = [
+  { round:"wildcard", label:"Wild Card", dates:"16-18 janvier 2027", points:1, matches:[
+    {id:"po-wc-a1", name:"AFC Match 1"}, {id:"po-wc-a2", name:"AFC Match 2"}, {id:"po-wc-a3", name:"AFC Match 3"},
+    {id:"po-wc-n1", name:"NFC Match 1"}, {id:"po-wc-n2", name:"NFC Match 2"}, {id:"po-wc-n3", name:"NFC Match 3"}
+  ]},
+  { round:"divisional", label:"Divisional", dates:"23-24 janvier 2027", points:2, matches:[
+    {id:"po-div-a1", name:"AFC Match 1"}, {id:"po-div-a2", name:"AFC Match 2"},
+    {id:"po-div-n1", name:"NFC Match 1"}, {id:"po-div-n2", name:"NFC Match 2"}
+  ]},
+  { round:"conference", label:"Conference Championship", dates:"31 janvier 2027", points:3, matches:[
+    {id:"po-conf-a", name:"AFC Championship"}, {id:"po-conf-n", name:"NFC Championship"}
+  ]},
+  { round:"superbowl", label:"Super Bowl LXI", dates:"14 février 2027", points:5, matches:[
+    {id:"po-sb", name:"Super Bowl LXI"}
+  ]}
+];
+
+/* ===================== ÉTAT / STOCKAGE ===================== */
+let pseudo = null;
+let currentWeek = WEEKS.find(w=>w.games.length>0)?.id || WEEKS[0].id;
+let activeTab = 'picks';
+let myPicks = {}; // { gid: "home"|"away" }
+let allResults = {}; // { gid: "home"|"away" }
+let myPlayoffPicks = {}; // { matchId: "home"|"away" }
+let playoffResults = {}; // { matchId: "home"|"away" }
+let playoffTeams = {}; // { matchId: [away, home] }
+
+function toggleInfo(){
+  const el = document.getElementById('infoPanel');
+  el.style.display = el.style.display==='none' ? 'block' : 'none';
+}
+
+async function login(){
+  const val = document.getElementById('pseudoInput').value.trim();
+  if(!val){ alert("Entre un pseudo !"); return; }
+  pseudo = val;
+  try{
+    const players = await getShared('players', []);
+    if(!players.includes(pseudo)){
+      players.push(pseudo);
+      await setShared('players', players);
+    }
+  }catch(e){ console.error(e); }
+
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('appView').style.display='block';
+  document.getElementById('pseudoBar').style.display='block';
+  document.getElementById('pseudoLabel').innerText = pseudo;
+  document.getElementById('saveBar').style.display='flex';
+
+  await loadAll();
+  renderWeeks();
+  renderGames();
+}
+
+async function getShared(key, fallback){
+  try{
+    const res = await window.storage.get(key, true);
+    return res ? JSON.parse(res.value) : fallback;
+  }catch(e){ return fallback; }
+}
+async function setShared(key, value){
+  try{ await window.storage.set(key, JSON.stringify(value), true); }
+  catch(e){ console.error("Erreur de sauvegarde", e); }
+}
+
+async function loadAll(){
+  myPicks = await getShared('picks:'+pseudo, {});
+  allResults = await getShared('results', {});
+  myPlayoffPicks = await getShared('playoffPicks:'+pseudo, {});
+  playoffResults = await getShared('playoffResults', {});
+  playoffTeams = await getShared('playoffTeams', {});
+}
+
+/* ===================== UI : SAISON (PRONOSTICS) ===================== */
+function renderWeeks(){
+  const el = document.getElementById('weeksScroll');
+  el.innerHTML = '';
+  WEEKS.forEach(w=>{
+    const chip = document.createElement('div');
+    chip.className = 'week-chip' + (w.id===currentWeek?' active':'') + (w.games.length===0?' disabled':'');
+    chip.innerText = w.label;
+    chip.onclick = ()=>{ currentWeek=w.id; renderWeeks(); renderGames(); if(adminOpen) renderAdmin(); };
+    el.appendChild(chip);
+  });
+}
+
+function renderGames(){
+  const week = WEEKS.find(w=>w.id===currentWeek);
+  const el = document.getElementById('gamesList');
+  el.innerHTML = '';
+  if(!week.games.length){
+    el.innerHTML = '<div class="empty-week">Les matchs de cette semaine arrivent bientôt 🏈</div>';
+    return;
+  }
+  week.games.forEach(g=>{
+    const div = document.createElement('div');
+    div.className='game';
+    const pick = myPicks[g.gid];
+    const result = allResults[g.gid];
+    div.innerHTML = `
+      <div class="game-meta"><span>${week.label}</span><span class="points-tag">1 pt</span></div>
+      <div class="matchup">
+        <div class="team-btn ${pick==='away'?'picked':''} ${result==='away'?'result-win':''}" onclick="pickTeam('${g.gid}','away')">${g.away}</div>
+        <div class="vs">@</div>
+        <div class="team-btn ${pick==='home'?'picked':''} ${result==='home'?'result-win':''}" onclick="pickTeam('${g.gid}','home')">${g.home}</div>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+
+function pickTeam(gid, side){
+  myPicks[gid] = side;
+  renderGames();
+}
+
+/* ===================== UI : PLAYOFFS ===================== */
+function renderPlayoffs(){
+  const el = document.getElementById('playoffsList');
+  el.innerHTML = PLAYOFFS.map(round=>{
+    const matches = round.matches.map(m=>{
+      const teams = playoffTeams[m.id];
+      const pick = myPlayoffPicks[m.id];
+      const result = playoffResults[m.id];
+      if(!teams){
+        return `<div class="game"><div class="game-meta"><span>${m.name}</span><span class="points-tag">${round.points} pt${round.points>1?'s':''}</span></div>
+          <div class="empty-week" style="padding:14px;">Équipes à confirmer</div></div>`;
+      }
+      const [away,home] = teams;
+      return `<div class="game">
+        <div class="game-meta"><span>${m.name}</span><span class="points-tag">${round.points} pt${round.points>1?'s':''}</span></div>
+        <div class="matchup">
+          <div class="team-btn ${pick==='away'?'picked':''} ${result==='away'?'result-win':''}" onclick="pickPlayoff('${m.id}','away')">${away}</div>
+          <div class="vs">@</div>
+          <div class="team-btn ${pick==='home'?'picked':''} ${result==='home'?'result-win':''}" onclick="pickPlayoff('${m.id}','home')">${home}</div>
+        </div></div>`;
+    }).join('');
+    return `<div class="round-block">
+      <div class="round-title"><span>${round.label} <span style="color:var(--muted); font-weight:400; font-size:11px;">(${round.dates})</span></span></div>
+      ${matches}
+    </div>`;
+  }).join('');
+}
+
+function pickPlayoff(matchId, side){
+  if(!playoffTeams[matchId]) return;
+  myPlayoffPicks[matchId] = side;
+  renderPlayoffs();
+}
+
+/* ===================== SAUVEGARDE ===================== */
+async function saveCurrent(){
+  if(activeTab==='playoffs'){
+    await setShared('playoffPicks:'+pseudo, myPlayoffPicks);
+  } else {
+    await setShared('picks:'+pseudo, myPicks);
+  }
+  const btn = document.querySelector('.save-bar button');
+  const old = btn.innerText;
+  btn.innerText = "✔ Enregistré !";
+  setTimeout(()=>btn.innerText=old, 1500);
+}
+
+/* ===================== TABS ===================== */
+function switchTab(tab){
+  activeTab = tab;
+  document.getElementById('tabPicks').className = 'tab'+(tab==='picks'?' active':'');
+  document.getElementById('tabPlayoffs').className = 'tab'+(tab==='playoffs'?' active':'');
+  document.getElementById('tabBoard').className = 'tab'+(tab==='board'?' active':'');
+  document.getElementById('picksView').style.display = tab==='picks'?'block':'none';
+  document.getElementById('playoffsView').style.display = tab==='playoffs'?'block':'none';
+  document.getElementById('boardView').style.display = tab==='board'?'block':'none';
+  document.getElementById('saveBar').style.display = (tab==='picks'||tab==='playoffs')?'flex':'none';
+  if(tab==='playoffs') renderPlayoffs();
+  if(tab==='board') renderLeaderboard();
+  if(adminOpen) renderAdmin();
+}
+
+/* ===================== CLASSEMENT (pondéré) ===================== */
+async function renderLeaderboard(){
+  const players = await getShared('players', []);
+  const results = await getShared('results', {});
+  const poResults = await getShared('playoffResults', {});
+  const scores = [];
+  for(const p of players){
+    const picks = await getShared('picks:'+p, {});
+    const poPicks = await getShared('playoffPicks:'+p, {});
+    let regScore = 0, poScore = 0;
+    Object.keys(results).forEach(gid=>{
+      if(picks[gid] && picks[gid]===results[gid]) regScore++;
+    });
+    PLAYOFFS.forEach(round=>{
+      round.matches.forEach(m=>{
+        if(poPicks[m.id] && poResults[m.id] && poPicks[m.id]===poResults[m.id]) poScore += round.points;
+      });
+    });
+    scores.push({pseudo:p, total:regScore+poScore, regScore, poScore});
+  }
+  scores.sort((a,b)=>b.total-a.total);
+  const el = document.getElementById('lbList');
+  if(!scores.length){
+    el.innerHTML = '<div class="empty-week">Personne n\'a encore de pronostics.</div>';
+    return;
+  }
+  el.innerHTML = scores.map((s,i)=>`
+    <div class="lb-row ${i===0?'top1':''}">
+      <div class="lb-rank">#${i+1}</div>
+      <div style="flex:1;">
+        <div class="lb-name">${s.pseudo}</div>
+        <div class="lb-detail">Saison : ${s.regScore} pt${s.regScore>1?'s':''} · Playoffs : ${s.poScore} pt${s.poScore>1?'s':''}</div>
+      </div>
+      <div class="lb-score">${s.total} pt${s.total>1?'s':''}</div>
+    </div>`).join('');
+}
+
+/* ===================== ADMIN ===================== */
+let adminOpen = false;
+function toggleAdmin(){
+  adminOpen = !adminOpen;
+  const panel = document.getElementById('adminPanel');
+  panel.style.display = adminOpen ? 'block' : 'none';
+  if(adminOpen) renderAdmin();
+}
+
+function renderAdmin(){
+  const panel = document.getElementById('adminPanel');
+  if(activeTab==='playoffs'){
+    panel.innerHTML = PLAYOFFS.map(round=>{
+      const matches = round.matches.map(m=>{
+        const teams = playoffTeams[m.id] || ['',''];
+        const result = playoffResults[m.id];
+        return `<div style="margin-bottom:10px;">
+          <div class="game-meta" style="margin-bottom:6px;">${m.name} (${round.label})</div>
+          <div class="matchup" style="margin-bottom:6px;">
+            <input class="team-input" id="ti-${m.id}-a" placeholder="Équipe visiteuse" value="${teams[0]}">
+            <div class="vs">@</div>
+            <input class="team-input" id="ti-${m.id}-h" placeholder="Équipe locale" value="${teams[1]}">
+          </div>
+          <button class="btn-small" onclick="savePlayoffTeams('${m.id}')">Enregistrer les équipes</button>
+          ${teams[0] && teams[1] ? `
+          <div class="matchup" style="margin-top:8px;">
+            <div class="team-btn ${result==='away'?'result-win':''}" onclick="setPlayoffResult('${m.id}','away')">${teams[0]}</div>
+            <div class="vs">@</div>
+            <div class="team-btn ${result==='home'?'result-win':''}" onclick="setPlayoffResult('${m.id}','home')">${teams[1]}</div>
+          </div>` : ''}
+        </div>`;
+      }).join('');
+      return `<div class="round-block"><div class="round-title">${round.label}</div>${matches}</div>`;
+    }).join('') + `<button class="btn-primary" onclick="switchTab('playoffs')" style="margin-top:6px;">Fermer</button>`;
+    return;
+  }
+
+  const week = WEEKS.find(w=>w.id===currentWeek);
+  if(!week.games.length){
+    panel.innerHTML = '<div class="empty-week">Pas de matchs cette semaine.</div>';
+    return;
+  }
+  panel.innerHTML = `<div class="game-meta" style="margin-bottom:8px;">Qui a gagné ? (${week.label})</div>` +
+    week.games.map(g=>{
+      const result = allResults[g.gid];
+      return `<div class="matchup" style="margin-bottom:8px;">
+        <div class="team-btn ${result==='away'?'result-win':''}" onclick="setResult('${g.gid}','away')">${g.away}</div>
+        <div class="vs">@</div>
+        <div class="team-btn ${result==='home'?'result-win':''}" onclick="setResult('${g.gid}','home')">${g.home}</div>
+      </div>`;
+    }).join('') +
+    `<button class="btn-primary" onclick="switchTab('picks')" style="margin-top:6px;">Fermer</button>`;
+}
+
+async function setResult(gid, side){
+  allResults[gid] = side;
+  await setShared('results', allResults);
+  renderAdmin();
+}
+
+async function savePlayoffTeams(matchId){
+  const a = document.getElementById('ti-'+matchId+'-a').value.trim();
+  const h = document.getElementById('ti-'+matchId+'-h').value.trim();
+  if(!a || !h){ alert("Entre les deux équipes."); return; }
+  playoffTeams[matchId] = [a,h];
+  await setShared('playoffTeams', playoffTeams);
+  renderAdmin();
+}
+
+async function setPlayoffResult(matchId, side){
+  playoffResults[matchId] = side;
+  await setShared('playoffResults', playoffResults);
+  renderAdmin();
+}
+
+/* Permet d'appuyer sur Entrée pour se connecter */
+document.getElementById('pseudoInput').addEventListener('keypress', e=>{
+  if(e.key==='Enter') login();
+});
+</script>
+</body>
+</html>
