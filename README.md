@@ -1,2 +1,2 @@
 # NFL-PRONO-2026-2027
-By Pinky Blinders
+# By Pinky Blinders
